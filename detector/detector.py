@@ -1,3 +1,4 @@
+import logging
 import os
 import zipfile
 import tarfile
@@ -9,25 +10,29 @@ class Code(object):
 
     @staticmethod
     def extractCode(file_name, file_path):
-        extension = file_name.rsplit('.', 1)[1].lower()
-        destination_path = file_path + file_name.rsplit('.', 1)[0].lower()
+        extension = file_name[1].lower()
+        file_name = file_name[0].lower()
+
+        source_path = file_path + '/' + file_name + '.' + extension
+        destination_path = file_path + '/' + file_name
         try:
-            if extension == '.zip':
-                with zipfile.ZipFile(file_path + file_name, 'r') as zip_ref:
+            if extension == 'zip':
+                with zipfile.ZipFile(source_path, 'r') as zip_ref:
                     zip_ref.extractall(destination_path)
-            elif extension == '.tar.gz' or extension == '.tgz':
-                with tarfile.open(file_path + file_name, 'r:gz') as tar_ref:
+            elif extension == 'tar.gz' or extension == 'tgz':
+                with tarfile.open(source_path, 'r:gz') as tar_ref:
                     tar_ref.extractall(destination_path)
-            elif extension == '.tar':
-                with tarfile.open(file_path + file_name, 'r') as tar_ref:
+            elif extension == 'tar':
+                with tarfile.open(source_path, 'r') as tar_ref:
                     tar_ref.extractall(destination_path)
-            elif extension == '.rar':
-                with rarfile.RarFile(file_path + file_name, 'r') as rar_ref:
+            elif extension == 'rar':
+                with rarfile.RarFile(source_path, 'r') as rar_ref:
                     rar_ref.extractall(destination_path)
             else:
+                print(extension)
                 raise Exception("File format not allowed")
 
-            return True
+            return destination_path
         except Exception as e:
             raise e
 
@@ -71,12 +76,16 @@ def detection(source_code, source_path):
     :param source_code: source code name
     :return: language_name
     """
+
+    source_code = source_code.rsplit('.', 1)
+    source_path = source_path.rsplit('.', 1)[0]
+
     data = Code()
-    data.extractCode(file_name=source_code, file_path=source_path)
-    flatten_code_data = data.flattenCode(directory=source_path + source_code)
+    code_path = data.extractCode(file_name=source_code, file_path=source_path)
+    flatten_code_data = data.flattenCode(directory=code_path)
 
     language_detection = Detection()
-    return language_detection.guesslang(flatten_code_data)
+    return language_detection.guesslang(codes=flatten_code_data)
 
 
 if __name__ == "__main__":

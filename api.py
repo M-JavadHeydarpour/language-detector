@@ -5,7 +5,7 @@ from detector.detector import detection
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1000 * 1000
-app.config['SOURCE_CODES_PATH'] = '/tmp/flask_data'
+app.config['SOURCE_CODES_PATH'] = '/data/codes'
 ALLOWED_EXTENSIONS = {'rar', 'zip', 'tar.gz', 'tar'}
 
 
@@ -38,7 +38,7 @@ def get_source_code():
         return resp
 
 
-@app.route('api/v1/language', methods=['GET'])
+@app.route('/api/v1/language', methods=['GET'])
 def get_language():
     if request.args.get('source_code'):
         lang = detection(source_code=request.args.get('source_code'), source_path=app.config['SOURCE_CODES_PATH'])
