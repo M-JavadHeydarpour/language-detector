@@ -10,8 +10,6 @@ ALLOWED_EXTENSIONS = {'rar', 'zip', 'tar.gz', 'tar'}
 
 
 def allowed_file(filename):
-    print(filename.rsplit('.', 1)[1].lower())
-    print(filename.rsplit('.', 1)[0].lower())
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
